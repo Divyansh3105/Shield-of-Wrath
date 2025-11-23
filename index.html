@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/png" href="asset/favicon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shield Hero Quiz - Wrath Edition</title>
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Shield of Wrath Quiz – Embrace the Curse Series">
+    <meta property="og:description"
+        content="Test your knowledge of The Rising of the Shield Hero. Face the flames and prove yourself worthy!">
+    <meta property="og:image" content="og-image.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="og-image.png">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Background Layers -->
+    <div id="bg-image"></div>
+    <div id="bg-overlay"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="container">
+        <header class="quiz-header">
+            <!-- SVG Shield Icon -->
+            <div class="shield-logo">
+                <svg viewBox="0 0 64 64" width="80" height="80" id="shieldSVG">
+                    <defs>
+                        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff4444" />
+                            <stop offset="50%" style="stop-color:#ff8800" />
+                            <stop offset="100%" style="stop-color:#ff4444" />
+                        </linearGradient>
+                        <linearGradient id="swordGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff6666" />
+                            <stop offset="100%" style="stop-color:#ff8800" />
+                        </linearGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                            <feMerge>
+                                <feMergeNode in="coloredBlur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <path fill="url(#shieldGrad)" filter="url(#glow)"
+                        d="M32 4C20 4 10 8 10 8v24c0 16 22 28 22 28s22-12 22-28V8S44 4 32 4z" />
+                    <path fill="#1a0a0a" opacity="0.3"
+                        d="M32 10c-8 0-16 3-16 3v20c0 12 16 21 16 21s16-9 16-21V13S40 10 32 10z" />
+                    <circle cx="32" cy="28" r="6" fill="#ff0000" filter="url(#glow)" id="shieldCore" />
+                </svg>
+            </div>
+            <h1 class="glow-text">Shield of Wrath Quiz</h1>
+            <div class="subtitle">Embrace the Curse Series</div>
+
+            <!-- THEME TOGGLE -->
+            <div style="margin-top:12px;">
+                <button id="themeToggle" class="btn btn-secondary" aria-pressed="false">⚡ Switch Theme</button>
+            </div>
+        </header>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen-card">
+            <div class="welcome-section">
+                <span class="hero-badge">
+                    <svg viewBox="0 0 64 64" width="60" height="60">
+                        <path id="badgePath" d="M12 52l4-4 8 8-4 4zM20 44l20-20 4 4-20 20zM44 20l8-16 4 4-16 8z"
+                            fill="url(#swordGrad)"></path>
+                    </svg>
+                </span>
+                <h2>Welcome, Hero!</h2>
+                <p class="welcome-text">Test your knowledge of The Rising of the Shield Hero. Face the flames and prove
+                    yourself worthy!</p>
+            </div>
+            <div class="input-group">
+                <label class="input-label"><span class="icon-user"></span> Enter Your Hero Name</label>
+                <input type="text" id="playerName" class="hero-input" placeholder="Your hero name..." maxlength="30">
+            </div>
+            <div class="input-group">
+                <label class="input-label"><span class="icon-sword"></span> Select Difficulty</label>
+                <select id="difficulty" class="difficulty-select">
+                    <option value="easy">🟢 Easy</option>
+                    <option value="medium" selected>🟡 Medium</option>
+                    <option value="hard">🔴 Hard</option>
+                </select>
+            </div>
+            <button id="startBtn" class="btn btn-primary btn-large">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M12 2C8 2 4 4 4 4v12c0 8 8 12 8 12s8-4 8-12V4S16 2 12 2z" />
+                </svg>
+                Begin Your Quest
+            </button>
+        </div>
+
+        <!-- Quiz Form -->
+        <form id="quiz" class="hidden">
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-icon">📜</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Question</div>
+                        <div class="stat-value" id="questionNum">1/15</div>
+                    </div>
+                </div>
+                <div class="stat-card" id="timerCard">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Time Left</div>
+                        <div class="stat-value timer" id="timer">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <div class="progress-text"><span id="progressPercent">0%</span></div>
+            </div>
+
+            <!-- Question 1 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q1.</span> Who is the main protagonist of The Rising of the Shield
+                    Hero?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q1" value="Ren Amaki"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">Ren
+                                Amaki</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q1" value="Naofumi Iwatani"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">Naofumi
+                                Iwatani</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q1" value="Motoyasu Kitamura"><span
+                            class="option-content"><span class="option-letter">C</span><span
+                                class="option-text">Motoyasu Kitamura</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q1" value="Itsuki Kawasumi"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">Itsuki
+                                Kawasumi</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 2 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q2.</span> What legendary weapon does Naofumi wield?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q2" value="Sword"><span class="option-content"><span
+                                class="option-letter">A</span><span class="option-text">Sword</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q2" value="Bow"><span class="option-content"><span
+                                class="option-letter">B</span><span class="option-text">Bow</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q2" value="Spear"><span class="option-content"><span
+                                class="option-letter">C</span><span class="option-text">Spear</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q2" value="Shield"><span
+                            class="option-content"><span class="option-letter">D</span><span
+                                class="option-text">Shield</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 3 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q3.</span> Who is Naofumi's first companion?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q3" value="Raphtalia"><span
+                            class="option-content"><span class="option-letter">A</span><span
+                                class="option-text">Raphtalia</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q3" value="Filo"><span class="option-content"><span
+                                class="option-letter">B</span><span class="option-text">Filo</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q3" value="Melty"><span class="option-content"><span
+                                class="option-letter">C</span><span class="option-text">Melty</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q3" value="Malty"><span class="option-content"><span
+                                class="option-letter">D</span><span class="option-text">Malty</span><span
+                                class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 4 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q4.</span> What race does Raphtalia belong to?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q4" value="Demi-human"><span
+                            class="option-content"><span class="option-letter">A</span><span
+                                class="option-text">Demi-human</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q4" value="Human"><span class="option-content"><span
+                                class="option-letter">B</span><span class="option-text">Human</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q4" value="Spirit"><span
+                            class="option-content"><span class="option-letter">C</span><span
+                                class="option-text">Spirit</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q4" value="Elf"><span class="option-content"><span
+                                class="option-letter">D</span><span class="option-text">Elf</span><span
+                                class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 5 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q5.</span> Which kingdom summons the four heroes?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q5" value="Melromarc"><span
+                            class="option-content"><span class="option-letter">A</span><span
+                                class="option-text">Melromarc</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q5" value="Faubrey"><span
+                            class="option-content"><span class="option-letter">B</span><span
+                                class="option-text">Faubrey</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q5" value="Siltvelt"><span
+                            class="option-content"><span class="option-letter">C</span><span
+                                class="option-text">Siltvelt</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q5" value="Q'ten Lo"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">Q'ten
+                                Lo</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 6 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q6.</span> What animal is Filo originally hatched from?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q6" value="Dragon egg"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">Dragon
+                                egg</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q6" value="Filolial egg"><span
+                            class="option-content"><span class="option-letter">B</span><span
+                                class="option-text">Filolial egg</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q6" value="Griffin egg"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">Griffin
+                                egg</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q6" value="Phoenix egg"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">Phoenix
+                                egg</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 7 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q7.</span> Who falsely accuses Naofumi of a crime?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q7" value="Melty"><span class="option-content"><span
+                                class="option-letter">A</span><span class="option-text">Melty</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q7" value="Queen Mirellia"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">Queen
+                                Mirellia</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q7" value="Malty"><span class="option-content"><span
+                                class="option-letter">C</span><span class="option-text">Malty</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q7" value="Motoyasu"><span
+                            class="option-content"><span class="option-letter">D</span><span
+                                class="option-text">Motoyasu</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 8 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q8.</span> What nickname does Naofumi earn among the people?
+                </legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q8" value="The Villain Hero"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">The
+                                Villain Hero</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q8" value="The Savior of the People"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">The
+                                Savior of the People</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q8" value="The Devil of the Shield"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">The
+                                Devil of the Shield</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q8" value="The Hero of the Waves"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">The
+                                Hero of the Waves</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 9 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q9.</span> What is the event that brings waves of monsters?
+                </legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q9" value="The Great Calamity"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">The
+                                Great Calamity</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q9" value="The Catastrophe"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">The
+                                Catastrophe</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q9" value="The Waves of Catastrophe"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">The
+                                Waves of Catastrophe</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q9" value="The Chaos Storm"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">The
+                                Chaos Storm</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 10 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q10.</span> Which hero wields the Bow?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q10" value="Itsuki Kawasumi"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">Itsuki
+                                Kawasumi</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q10" value="Ren Amaki"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">Ren
+                                Amaki</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q10" value="Motoyasu Kitamura"><span
+                            class="option-content"><span class="option-letter">C</span><span
+                                class="option-text">Motoyasu Kitamura</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q10" value="Naofumi Iwatani"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">Naofumi
+                                Iwatani</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 11 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q11.</span> What is the name of the Queen of Melromarc?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q11" value="Mirellia Q Melromarc"><span
+                            class="option-content"><span class="option-letter">A</span><span
+                                class="option-text">Mirellia Q Melromarc</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q11" value="Malty Q Melromarc"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">Malty Q
+                                Melromarc</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q11" value="Melty Q Melromarc"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">Melty Q
+                                Melromarc</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q11" value="Myne Q Melromarc"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">Myne Q
+                                Melromarc</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 12 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q12.</span> What ability allows Naofumi to copy other shields?
+                </legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q12" value="Shield Copy"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">Shield
+                                Copy</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q12" value="Mimicry Skill"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">Mimicry
+                                Skill</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q12" value="Shield Transformation"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">Shield
+                                Transformation</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q12" value="Shield Fusion"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">Shield
+                                Fusion</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 13 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q13.</span> Which dragon's core does Naofumi use in one of his
+                    shields?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q13" value="White Dragon"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">White
+                                Dragon</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q13" value="Spirit Dragon"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">Spirit
+                                Dragon</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q13" value="Zombie Dragon"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">Zombie
+                                Dragon</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q13" value="Fire Dragon"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">Fire
+                                Dragon</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 14 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q14.</span> What is Fitoria's role in the story?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q14" value="Queen of the Filolials"><span
+                            class="option-content"><span class="option-letter">A</span><span class="option-text">Queen
+                                of the Filolials</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q14" value="A rival hero"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">A rival
+                                hero</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q14" value="Goddess of the Waves"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">Goddess
+                                of the Waves</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q14" value="Naofumi's mentor"><span
+                            class="option-content"><span class="option-letter">D</span><span
+                                class="option-text">Naofumi's mentor</span><span
+                                class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <!-- Question 15 -->
+            <fieldset class="question-set">
+                <legend><span class="question-number">Q15.</span> What does the Shield of Wrath represent?</legend>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q15" value="Naofumi's anger and hatred"><span
+                            class="option-content"><span class="option-letter">A</span><span
+                                class="option-text">Naofumi's anger and hatred</span><span
+                                class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q15" value="His divine power"><span
+                            class="option-content"><span class="option-letter">B</span><span class="option-text">His
+                                divine power</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q15" value="His bond with Raphtalia"><span
+                            class="option-content"><span class="option-letter">C</span><span class="option-text">His
+                                bond with Raphtalia</span><span class="option-check">✓</span></span></label>
+                    <label class="option"><input type="radio" name="q15" value="The ultimate form of defense"><span
+                            class="option-content"><span class="option-letter">D</span><span class="option-text">The
+                                ultimate form of defense</span><span class="option-check">✓</span></span></label>
+                </div>
+            </fieldset>
+
+            <div class="nav-buttons">
+                <button type="button" id="prevBtn" class="btn btn-secondary">◀ Previous</button>
+                <button type="button" id="nextBtn" class="btn btn-primary">Next ▶</button>
+            </div>
+        </form>
+
+        <!-- Results Screen -->
+        <div id="results" class="results">
+            <div class="trophy-icon">🏆</div>
+            <h2>Quest Complete!</h2>
+            <div class="hero-name-display">
+                <span class="hero-title">Hero:</span>
+                <span id="heroName" class="hero-name-text"></span>
+            </div>
+            <div class="score-container">
+                <div class="score-circle">
+                    <svg class="score-ring" width="180" height="180">
+                        <circle cx="90" cy="90" r="80" class="score-ring-bg"></circle>
+                        <circle cx="90" cy="90" r="80" class="score-ring-fill" id="scoreRing"></circle>
+                    </svg>
+                    <div class="score-content">
+                        <div class="score" id="finalScore">0/15</div>
+                        <div class="score-percent" id="scorePercent">0%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="score-message" id="scoreMessage"></div>
+            <div class="achievement-badges" id="achievementBadges"></div>
+            <button id="restartBtn" class="btn btn-primary btn-large">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M12 2C8 2 4 4 4 4v12c0 8 8 12 8 12s8-4 8-12V4S16 2 12 2z" />
+                </svg>
+                Try Again
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>⚔️ Shield Hero Quiz – Wrath Edition ⚔️</p>
+            <p class="footer-small">Created by Divyansh | Inspired by The Rising of the Shield Hero</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
