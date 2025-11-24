@@ -135,7 +135,20 @@
 
             <!-- THEME TOGGLE -->
             <div style="margin-top:12px;">
-                <button id="themeToggle" class="btn btn-secondary" aria-pressed="false">⚡ Switch Theme</button>
+                <button id="themeToggle" class="btn-theme" aria-pressed="false">
+                    <span class="theme-icon">
+                        <svg class="icon-wrath" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M12 2l2 7h7l-5.5 4.5 2 7L12 16l-5.5 4.5 2-7L3 9h7z" />
+                        </svg>
+                        <svg class="icon-shield" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M12 2C8 2 4 4 4 4v12c0 8 8 12 8 12s8-4 8-12V4S16 2 12 2z" />
+                        </svg>
+                    </span>
+                    <span class="theme-text">
+                        <span class="theme-label-wrath">Shield Mode</span>
+                        <span class="theme-label-shield">Wrath Mode</span>
+                    </span>
+                </button>
             </div>
         </header>
 

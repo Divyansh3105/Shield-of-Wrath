@@ -1,7 +1,3 @@
-// ============================================
-// SHIELD HERO QUIZ - THEMES + DUAL PARTICLES
-// ============================================
-
 // ============ CANVAS & PARTICLES ============
 const canvas = document.getElementById("particles-canvas");
 const ctx = canvas.getContext("2d");
@@ -10,6 +6,7 @@ function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
+
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
@@ -94,6 +91,28 @@ class IceParticle {
 let fireParticles = [];
 let iceParticles = [];
 let currentMode = "wrath"; // 'wrath' or 'shield'
+
+// THEME MUSIC
+const wrathMusic = new Audio("asset/wrath.mp3");
+const shieldMusic = new Audio("asset/Shield.mp3");
+
+wrathMusic.loop = true;
+shieldMusic.loop = true;
+wrathMusic.volume = 0.6;
+shieldMusic.volume = 0.6;
+
+// functions
+function playWrathMusic() {
+  shieldMusic.pause();
+  shieldMusic.currentTime = 0;
+  wrathMusic.play().catch(() => {});
+}
+
+function playShieldMusic() {
+  wrathMusic.pause();
+  wrathMusic.currentTime = 0;
+  shieldMusic.play().catch(() => {});
+}
 
 // initialize
 for (let i = 0; i < 80; i++) fireParticles.push(new FireParticle());
@@ -399,6 +418,9 @@ function startQuiz() {
     return;
   }
 
+  if (currentMode === "shield") playShieldMusic();
+  else playWrathMusic();
+
   $("startScreen").classList.add("hidden");
   $("quiz").classList.remove("hidden");
 
@@ -608,16 +630,19 @@ function restartQuiz() {
 const themeToggleBtn = $("themeToggle");
 
 function initTheme() {
-  const saved = localStorage.getItem("shield_quiz_theme");
-  if (saved === "shield") {
-    setTheme("shield", false);
-  } else {
-    setTheme("wrath", false);
-  }
+  function initTheme() {
+    const saved = localStorage.getItem("shieldhero-theme");
 
-  themeToggleBtn.addEventListener("click", () => {
-    setTheme(currentMode === "wrath" ? "shield" : "wrath", true);
-  });
+    if (saved === "shield") {
+      document.body.classList.add("shield-mode");
+      currentMode = "shield";
+    } else {
+      document.body.classList.remove("shield-mode");
+      currentMode = "wrath";
+    }
+
+    updateThemeVisuals();
+  }
 }
 
 function setTheme(mode, persist = true) {
@@ -645,6 +670,26 @@ function setTheme(mode, persist = true) {
 
   if (persist) localStorage.setItem("shield_quiz_theme", mode);
 }
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("shield-mode");
+  const isShield = document.body.classList.contains("shield-mode");
+
+  // Update aria-pressed for accessibility
+  themeToggle.setAttribute("aria-pressed", isShield ? "true" : "false");
+
+  if (isShield) {
+    currentMode = "shield";
+    localStorage.setItem("shieldhero-theme", "shield");
+    playShieldMusic(); // audio works after click
+  } else {
+    currentMode = "wrath";
+    localStorage.setItem("shieldhero-theme", "wrath");
+    playWrathMusic(); // audio works after click
+  }
+
+  updateThemeVisuals();
+});
 
 function updateSVGColors() {
   const root = getComputedStyle(document.documentElement);

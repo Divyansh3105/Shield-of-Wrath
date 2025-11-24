@@ -212,9 +212,217 @@ body.shield-mode .container {
   text-shadow: 0 0 15px var(--glow-2);
 }
 
-/* Theme Toggle (placed under header) */
+/* Theme Toggle - Enhanced Design */
+.btn-theme {
+  min-width: 160px; /* prevents shrinking */
+  white-space: nowrap; /* keeps full text visible */
+  gap: 12px !important;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 68, 68, 0.2),
+    rgba(255, 136, 0, 0.15)
+  );
+  border: 2px solid rgba(255, 68, 68, 0.4);
+  color: var(--text-light);
+  box-shadow: 0 4px 15px rgba(255, 68, 68, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+body.shield-mode .btn-theme {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 184, 184, 0.2),
+    rgba(0, 255, 170, 0.15)
+  );
+  border-color: rgba(0, 200, 200, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 200, 200, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn-theme:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 25px rgba(255, 68, 68, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: var(--primary);
+}
+
+body.shield-mode .btn-theme:hover {
+  box-shadow: 0 6px 25px rgba(0, 200, 200, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-theme:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Theme icon container with rotation effect */
+.theme-icon {
+  position: relative;
+  margin-right: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.btn-theme:hover .theme-icon {
+  transform: rotate(180deg);
+}
+
+/* Icon visibility toggle */
+.icon-wrath,
+.icon-shield {
+  position: absolute;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.icon-wrath {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.icon-shield {
+  opacity: 0;
+  transform: scale(0.5) rotate(-90deg);
+}
+
+body.shield-mode .icon-wrath {
+  opacity: 0;
+  transform: scale(0.5) rotate(90deg);
+}
+
+body.shield-mode .icon-shield {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* Text label switcher */
+.theme-text {
+  position: relative;
+  margin-left: 2px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-width: 60px;
+}
+
+.theme-label-wrath,
+.theme-label-shield {
+  position: absolute;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.theme-label-wrath {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.theme-label-shield {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+body.shield-mode .theme-label-wrath {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+body.shield-mode .theme-label-shield {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animated glow effect on hover */
+.btn-theme::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50px;
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--accent),
+    var(--primary)
+  );
+  background-size: 200% 200%;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.4s ease;
+  animation: gradientShift 3s ease infinite;
+}
+
+.btn-theme:hover::before {
+  opacity: 0.15;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Pulse animation on click */
+.btn-theme::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.btn-theme:active::after {
+  opacity: 0.3;
+  transform: scale(1.2);
+  transition: opacity 0s, transform 0s;
+}
+
+/* Theme Toggle positioning */
 #themeToggle {
   margin-top: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .btn-theme {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
+
+  .theme-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
 }
 
 /* Screen Card */
