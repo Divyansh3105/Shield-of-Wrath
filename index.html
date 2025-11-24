@@ -26,6 +26,75 @@
 </head>
 
 <body>
+    <!-- CUSTOM LOADING SCREEN -->
+    <div id="loadingScreen" aria-hidden="false">
+        <div class="loader-wrap">
+            <div class="loader-stage">
+                <div class="loader-logo">
+                    <!-- Reuse small shield SVG for center -->
+                    <svg viewBox="0 0 64 64" width="64" height="64" id="loaderShield">
+                        <defs>
+                            <linearGradient id="loaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ff4444"></stop>
+                                <stop offset="100%" stop-color="#ff8800"></stop>
+                            </linearGradient>
+                            <filter id="loaderGlow">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                            </filter>
+                        </defs>
+                        <path fill="url(#loaderGrad)" filter="url(#loaderGlow)"
+                            d="M32 4C20 4 10 8 10 8v24c0 16 22 28 22 28s22-12 22-28V8S44 4 32 4z" />
+                    </svg>
+                    <div class="loader-text">Shield of Wrath</div>
+                </div>
+
+                <!-- Floating characters container -->
+                <div class="floating-characters" aria-hidden="true">
+                    <!-- Raphtalia (left) - simplified stylized SVG -->
+                    <div class="char char-raphtalia" id="raphtaliaSVG" role="img" aria-label="Raphtalia">
+                        <svg viewBox="0 0 120 120" width="120" height="120" preserveAspectRatio="xMidYMid meet">
+                            <!-- simple character silhouette / stylized art -->
+                            <defs>
+                                <linearGradient id="rapGrad" x1="0" x2="1">
+                                    <stop offset="0" stop-color="#ffb8a8" />
+                                    <stop offset="1" stop-color="#ff6f61" />
+                                </linearGradient>
+                            </defs>
+                            <g transform="translate(10,10)">
+                                <circle cx="40" cy="24" r="18" fill="url(#rapGrad)" />
+                                <rect x="18" y="46" width="44" height="52" rx="12" fill="#5a2b1f" opacity="0.95" />
+                                <path d="M42 56 q8 8 0 16 q-8 8 -16 0 q-8 -8 0 -16 q8 -8 16 0z" fill="#ffc8b0"
+                                    opacity="0.85" />
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Naofumi (right) - simplified stylized SVG -->
+                    <div class="char char-naofumi" id="naofumiSVG" role="img" aria-label="Naofumi">
+                        <svg viewBox="0 0 120 120" width="120" height="120" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <linearGradient id="nafGrad" x1="0" x2="1">
+                                    <stop offset="0" stop-color="#00d4d4" />
+                                    <stop offset="1" stop-color="#007f7f" />
+                                </linearGradient>
+                            </defs>
+                            <g transform="translate(10,10)">
+                                <circle cx="40" cy="24" r="18" fill="url(#nafGrad)" />
+                                <rect x="12" y="46" width="56" height="52" rx="12" fill="#101820" opacity="0.95" />
+                                <rect x="24" y="64" width="32" height="10" rx="4" fill="#2a9d9d" opacity="0.9" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="loader-sub">Preparing your quest...</div>
+                <div class="loader-bar" id="loaderBar">
+                    <div class="loader-fill" id="loaderFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Background Layers -->
     <div id="bg-image"></div>
     <div id="bg-overlay"></div>

@@ -171,6 +171,132 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme(); // load saved theme or default
 });
 
+/* ============================
+   Loading screen + character controls
+   ============================ */
+const loadingScreen = document.getElementById("loadingScreen");
+const loaderFill = document.getElementById("loaderFill");
+let loaderProgress = 0;
+let loaderTimer = null;
+
+function showLoadingScreen() {
+  if (!loadingScreen) return;
+  loadingScreen.classList.remove("hidden");
+  loadingScreen.setAttribute("aria-hidden", "false");
+  loaderProgress = 0;
+  if (loaderTimer) clearInterval(loaderTimer);
+  loaderFill.style.width = "0%";
+
+  // faux progress to feel cinematic; real assets can bump it via setLoadingProgress()
+  loaderTimer = setInterval(() => {
+    loaderProgress += Math.random() * 10; // random step
+    if (loaderProgress >= 95) {
+      loaderProgress = 95;
+      clearInterval(loaderTimer);
+    }
+    loaderFill.style.width = Math.round(loaderProgress) + "%";
+  }, 420);
+}
+
+function hideLoadingScreen(instant = false) {
+  if (!loadingScreen) return;
+  // fill to 100% then fade
+  loaderFill.style.width = "100%";
+  setTimeout(
+    () => {
+      loadingScreen.classList.add("hidden");
+      loadingScreen.setAttribute("aria-hidden", "true");
+      // clean up
+      if (loaderTimer) {
+        clearInterval(loaderTimer);
+        loaderTimer = null;
+      }
+    },
+    instant ? 80 : 480
+  );
+}
+
+/* Allow other parts of app to report progress (e.g. images, fonts) */
+function setLoadingProgress(percent) {
+  loaderProgress = Math.max(0, Math.min(100, percent));
+  if (loaderFill) loaderFill.style.width = loaderProgress + "%";
+  if (loaderProgress >= 100) hideLoadingScreen();
+}
+
+/* Preload high-res images / important assets then hide loader */
+function preloadImportantAssets(list = []) {
+  if (!list.length) {
+    // short delay so loader doesn't vanish immediately on fast loads
+    setTimeout(() => hideLoadingScreen(), 600);
+    return;
+  }
+  let loaded = 0;
+  list.forEach((src) => {
+    const img = new Image();
+    img.onload = img.onerror = () => {
+      loaded++;
+      setLoadingProgress(Math.round((loaded / list.length) * 100));
+      if (loaded === list.length) {
+        // small delay for polish
+        setTimeout(() => hideLoadingScreen(), 360);
+      }
+    };
+    img.src = src;
+  });
+}
+
+/* Pause character float animations (useful when quiz begins) */
+function setCharacterFloating(enabled = true) {
+  const rap = document.querySelector(".char-raphtalia");
+  const naf = document.querySelector(".char-naofumi");
+  if (!rap || !naf) return;
+  if (enabled) {
+    rap.style.animationPlayState = "running";
+    naf.style.animationPlayState = "running";
+  } else {
+    rap.style.animationPlayState = "paused";
+    naf.style.animationPlayState = "paused";
+  }
+}
+
+/* Integrate with existing DOMContentLoaded:
+   - show loader on page start
+   - then preload bg images used in CSS (if present)
+*/
+document.addEventListener("DOMContentLoaded", () => {
+  // show loader right away
+  showLoadingScreen();
+
+  // find background images used by page (simple heuristic)
+  const bgImages = [
+    "asset/shieldhero.png",
+    "asset/shieldmode.jpg",
+    "asset/og-image.png",
+  ];
+
+  // preload them and wait to hide loader
+  preloadImportantAssets(bgImages);
+
+  // pause floating when quiz starts
+  const startBtn = document.getElementById("startBtn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      // hide loading screen immediately (user moved on)
+      hideLoadingScreen(true);
+      setCharacterFloating(false);
+    });
+  }
+
+  // Also hide loader when theme toggle or other startup actions finish
+  // (call setLoadingProgress(100) from anywhere to close loader)
+});
+
+/* Optional: expose to window for debugging */
+window.showLoadingScreen = showLoadingScreen;
+window.hideLoadingScreen = hideLoadingScreen;
+window.setLoadingProgress = setLoadingProgress;
+window.setCharacterFloating = setCharacterFloating;
+
 function bindOptionListeners() {
   document.querySelectorAll(".option").forEach((opt) => {
     opt.addEventListener("click", function () {
