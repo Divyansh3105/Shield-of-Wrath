@@ -50,49 +50,229 @@
 
                 <!-- Floating characters container -->
                 <div class="floating-characters" aria-hidden="true">
-                    <!-- Raphtalia (left) - simplified stylized SVG -->
+                    <!-- Raphtalia (left) - Chibi style with animal ears -->
                     <div class="char char-raphtalia" id="raphtaliaSVG" role="img" aria-label="Raphtalia">
-                        <svg viewBox="0 0 120 120" width="120" height="120" preserveAspectRatio="xMidYMid meet">
-                            <!-- simple character silhouette / stylized art -->
+                        <svg viewBox="0 0 140 180" width="140" height="180" preserveAspectRatio="xMidYMid meet">
                             <defs>
-                                <linearGradient id="rapGrad" x1="0" x2="1">
-                                    <stop offset="0" stop-color="#ffb8a8" />
-                                    <stop offset="1" stop-color="#ff6f61" />
+                                <linearGradient id="rapHairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#c98860" />
+                                    <stop offset="50%" stop-color="#b8704f" />
+                                    <stop offset="100%" stop-color="#8b5a3c" />
                                 </linearGradient>
+                                <linearGradient id="rapSkinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffe4d4" />
+                                    <stop offset="100%" stop-color="#ffc8b8" />
+                                </linearGradient>
+                                <linearGradient id="rapDressGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#8d5e67" />
+                                    <stop offset="100%" stop-color="#6d4e57" />
+                                </linearGradient>
+                                <radialGradient id="rapEyeShine">
+                                    <stop offset="0%" stop-color="#ff88bb" />
+                                    <stop offset="100%" stop-color="#d4668f" />
+                                </radialGradient>
+                                <filter id="rapGlow">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
                             </defs>
-                            <g transform="translate(10,10)">
-                                <circle cx="40" cy="24" r="18" fill="url(#rapGrad)" />
-                                <rect x="18" y="46" width="44" height="52" rx="12" fill="#5a2b1f" opacity="0.95" />
-                                <path d="M42 56 q8 8 0 16 q-8 8 -16 0 q-8 -8 0 -16 q8 -8 16 0z" fill="#ffc8b0"
-                                    opacity="0.85" />
-                            </g>
+                            <!-- Shadow base -->
+                            <ellipse cx="70" cy="172" rx="38" ry="6" fill="url(#rapDressGrad)" opacity="0.3"
+                                filter="url(#rapGlow)" />
+                            <!-- Legs/Feet -->
+                            <rect x="58" y="150" width="10" height="18" rx="2" fill="#8b6f4f" />
+                            <rect x="72" y="150" width="10" height="18" rx="2" fill="#8b6f4f" />
+                            <ellipse cx="63" cy="168" rx="6" ry="4" fill="#6b5344" />
+                            <ellipse cx="77" cy="168" rx="6" ry="4" fill="#6b5344" />
+                            <!-- Body - dress -->
+                            <path d="M50 90 L50 130 Q50 145 55 150 L60 150 L80 150 L85 150 Q90 145 90 130 L90 90 Z"
+                                fill="url(#rapDressGrad)" stroke="#5a3642" stroke-width="1.5" />
+                            <!-- Dress highlights -->
+                            <path d="M52 95 Q55 100 58 105" stroke="#9d6e77" stroke-width="1" opacity="0.5"
+                                fill="none" />
+                            <!-- Belt -->
+                            <rect x="50" y="88" width="40" height="5" rx="1" fill="#5a3642" />
+                            <circle cx="70" cy="90" r="3" fill="#8b6f4f" />
+                            <!-- Arms -->
+                            <ellipse cx="45" cy="100" rx="8" ry="20" fill="url(#rapSkinGrad)" stroke="#d4a394"
+                                stroke-width="1" />
+                            <ellipse cx="95" cy="100" rx="8" ry="20" fill="url(#rapSkinGrad)" stroke="#d4a394"
+                                stroke-width="1" />
+                            <!-- Hands -->
+                            <circle cx="45" cy="118" r="5" fill="url(#rapSkinGrad)" />
+                            <circle cx="95" cy="118" r="5" fill="url(#rapSkinGrad)" />
+                            <!-- Sword -->
+                            <rect x="88" y="105" width="4" height="28" rx="1" fill="#a8a8a8" stroke="#6a6a6a"
+                                stroke-width="0.8" />
+                            <rect x="86" y="103" width="8" height="5" rx="1" fill="#7b6354" />
+                            <!-- Neck -->
+                            <ellipse cx="70" cy="78" rx="10" ry="6" fill="url(#rapSkinGrad)" />
+                            <!-- Head -->
+                            <circle cx="70" cy="50" r="28" fill="url(#rapSkinGrad)" stroke="#d4a394"
+                                stroke-width="1.5" />
+                            <!-- Animal ears -->
+                            <ellipse cx="52" cy="28" rx="13" ry="22" fill="url(#rapHairGrad)" stroke="#8b5a3c"
+                                stroke-width="1.5" transform="rotate(-18 52 28)" />
+                            <ellipse cx="52" cy="28" rx="8" ry="16" fill="#f4d4c4" transform="rotate(-18 52 28)" />
+                            <ellipse cx="88" cy="28" rx="13" ry="22" fill="url(#rapHairGrad)" stroke="#8b5a3c"
+                                stroke-width="1.5" transform="rotate(18 88 28)" />
+                            <ellipse cx="88" cy="28" rx="8" ry="16" fill="#f4d4c4" transform="rotate(18 88 28)" />
+                            <!-- Hair -->
+                            <path d="M42 35 Q38 42 40 52 L43 62 Q44 45 48 35 Q52 28 58 26 Q50 22 42 35 Z"
+                                fill="url(#rapHairGrad)" />
+                            <path d="M98 35 Q102 42 100 52 L97 62 Q96 45 92 35 Q88 28 82 26 Q90 22 98 35 Z"
+                                fill="url(#rapHairGrad)" />
+                            <path
+                                d="M48 24 Q58 18 70 18 Q82 18 92 24 Q98 28 98 38 L98 68 Q94 74 88 76 L52 76 Q46 74 42 68 L42 38 Q42 28 48 24 Z"
+                                fill="url(#rapHairGrad)" stroke="#8b5a3c" stroke-width="1.2" />
+                            <!-- Hair highlights -->
+                            <path d="M55 30 Q65 26 75 30" stroke="#d4a080" stroke-width="1.5" opacity="0.4"
+                                fill="none" />
+                            <!-- Eyes -->
+                            <ellipse cx="59" cy="48" rx="7" ry="9" fill="#fff" />
+                            <ellipse cx="81" cy="48" rx="7" ry="9" fill="#fff" />
+                            <ellipse cx="59" cy="50" r="5" fill="url(#rapEyeShine)" />
+                            <ellipse cx="81" cy="50" r="5" fill="url(#rapEyeShine)" />
+                            <circle cx="59" cy="51" r="3" fill="#b84478" />
+                            <circle cx="81" cy="51" r="3" fill="#b84478" />
+                            <!-- Eye highlights -->
+                            <circle cx="60" cy="48" r="2.5" fill="#fff" opacity="0.9" />
+                            <circle cx="82" cy="48" r="2.5" fill="#fff" opacity="0.9" />
+                            <!-- Eyebrows -->
+                            <path d="M53 40 Q59 39 64 40" stroke="#8b5a3c" stroke-width="1.5" fill="none" />
+                            <path d="M76 40 Q81 39 87 40" stroke="#8b5a3c" stroke-width="1.5" fill="none" />
+                            <!-- Mouth -->
+                            <path d="M64 60 Q70 65 76 60" fill="none" stroke="#d4a394" stroke-width="1.8" />
+                            <path d="M66 62 Q70 64 74 62" fill="#ff9999" />
+                            <!-- Blush -->
+                            <ellipse cx="50" cy="56" rx="6" ry="4" fill="#ffb8c8" opacity="0.6" />
+                            <ellipse cx="90" cy="56" rx="6" ry="4" fill="#ffb8c8" opacity="0.6" />
+                            <!-- Tail -->
+                            <path d="M85 130 Q92 133 98 140 Q100 148 98 152 Q95 150 92 145 Q88 138 85 133 Z"
+                                fill="url(#rapHairGrad)" stroke="#8b5a3c" stroke-width="1.2" />
                         </svg>
                     </div>
 
-                    <!-- Naofumi (right) - simplified stylized SVG -->
+                    <!-- Naofumi (right) - Chibi style with shield -->
                     <div class="char char-naofumi" id="naofumiSVG" role="img" aria-label="Naofumi">
-                        <svg viewBox="0 0 120 120" width="120" height="120" preserveAspectRatio="xMidYMid meet">
+                        <svg viewBox="0 0 140 180" width="140" height="180" preserveAspectRatio="xMidYMid meet">
                             <defs>
-                                <linearGradient id="nafGrad" x1="0" x2="1">
-                                    <stop offset="0" stop-color="#00d4d4" />
-                                    <stop offset="1" stop-color="#007f7f" />
+                                <linearGradient id="nafHairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#5a5a5a" />
+                                    <stop offset="50%" stop-color="#4a4a4a" />
+                                    <stop offset="100%" stop-color="#2a2a2a" />
                                 </linearGradient>
+                                <linearGradient id="nafSkinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffe4d4" />
+                                    <stop offset="100%" stop-color="#ffc8b8" />
+                                </linearGradient>
+                                <linearGradient id="nafCloakGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#6a8a6a" />
+                                    <stop offset="100%" stop-color="#4a6a4a" />
+                                </linearGradient>
+                                <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#c8d4dc" />
+                                    <stop offset="50%" stop-color="#8a9aa8" />
+                                    <stop offset="100%" stop-color="#6a7a88" />
+                                </linearGradient>
+                                <radialGradient id="shieldGem">
+                                    <stop offset="0%" stop-color="#88ffaa" />
+                                    <stop offset="100%" stop-color="#339966" />
+                                </radialGradient>
+                                <filter id="nafGlow">
+                                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
                             </defs>
-                            <g transform="translate(10,10)">
-                                <circle cx="40" cy="24" r="18" fill="url(#nafGrad)" />
-                                <rect x="12" y="46" width="56" height="52" rx="12" fill="#101820" opacity="0.95" />
-                                <rect x="24" y="64" width="32" height="10" rx="4" fill="#2a9d9d" opacity="0.9" />
+                            <!-- Shadow -->
+                            <ellipse cx="70" cy="172" rx="38" ry="6" fill="url(#nafCloakGrad)" opacity="0.3"
+                                filter="url(#nafGlow)" />
+                            <!-- Legs/Feet -->
+                            <rect x="58" y="150" width="10" height="18" rx="2" fill="#5a4a3a" />
+                            <rect x="72" y="150" width="10" height="18" rx="2" fill="#5a4a3a" />
+                            <ellipse cx="63" cy="168" rx="6" ry="4" fill="#3a2a1a" />
+                            <ellipse cx="77" cy="168" rx="6" ry="4" fill="#3a2a1a" />
+                            <!-- Shield (left side) -->
+                            <g transform="translate(12, 70)">
+                                <path d="M20 10 L5 15 L5 45 Q5 55 20 60 L20 10 Z" fill="url(#shieldGrad)"
+                                    stroke="#4a5a68" stroke-width="2" />
+                                <path d="M20 10 L35 15 L35 45 Q35 55 20 60 L20 10 Z" fill="url(#shieldGrad)"
+                                    stroke="#4a5a68" stroke-width="2" opacity="0.9" />
+                                <circle cx="20" cy="35" r="7" fill="url(#shieldGem)" stroke="#2a5a3a"
+                                    stroke-width="1.5" />
+                                <circle cx="20" cy="35" r="4" fill="#aaffcc" opacity="0.7" />
+                                <circle cx="22" cy="33" r="2" fill="#fff" opacity="0.8" />
+                                <!-- Shield details -->
+                                <path d="M10 20 Q20 18 30 20" stroke="#d8e4ec" stroke-width="1" opacity="0.5"
+                                    fill="none" />
+                                <path d="M10 35 Q20 33 30 35" stroke="#d8e4ec" stroke-width="1" opacity="0.5"
+                                    fill="none" />
                             </g>
+                            <!-- Body - cloak -->
+                            <path d="M45 85 L45 130 Q45 145 50 150 L60 150 L80 150 L90 150 Q95 145 95 130 L95 85 Z"
+                                fill="url(#nafCloakGrad)" stroke="#3a5a3a" stroke-width="1.5" />
+                            <!-- Cloak highlights -->
+                            <path d="M48 90 Q52 95 55 100" stroke="#7a9a7a" stroke-width="1" opacity="0.4"
+                                fill="none" />
+                            <!-- Fur trim -->
+                            <ellipse cx="50" cy="88" rx="6" ry="4" fill="#e8e8d8" />
+                            <ellipse cx="60" cy="88" rx="6" ry="4" fill="#e8e8d8" />
+                            <ellipse cx="70" cy="88" rx="6" ry="4" fill="#e8e8d8" />
+                            <ellipse cx="80" cy="88" rx="6" ry="4" fill="#e8e8d8" />
+                            <ellipse cx="90" cy="88" rx="6" ry="4" fill="#e8e8d8" />
+                            <!-- Belt -->
+                            <rect x="45" y="110" width="50" height="6" rx="1" fill="#5a4a3a" />
+                            <rect x="67" y="108" width="6" height="10" rx="1" fill="#7a6a5a" />
+                            <!-- Right arm -->
+                            <ellipse cx="100" cy="100" rx="8" ry="20" fill="url(#nafSkinGrad)" stroke="#d4a394"
+                                stroke-width="1" />
+                            <!-- Hand -->
+                            <circle cx="100" cy="118" r="5" fill="url(#nafSkinGrad)" />
+                            <!-- Neck -->
+                            <ellipse cx="70" cy="78" rx="10" ry="6" fill="url(#nafSkinGrad)" />
+                            <!-- Head -->
+                            <circle cx="70" cy="50" r="28" fill="url(#nafSkinGrad)" stroke="#d4a394"
+                                stroke-width="1.5" />
+                            <!-- Hair - spiky -->
+                            <path
+                                d="M42 40 Q40 35 38 30 Q40 25 45 28 Q42 22 45 18 Q48 20 48 25 Q50 18 54 16 Q56 20 54 26 Q58 20 62 18 Q64 22 62 28 Q66 22 70 20 Q72 24 70 30 Q74 24 78 22 Q80 26 78 32 Q82 26 86 24 Q88 28 86 34 Q90 28 94 26 Q96 30 94 36 Q98 32 102 32 Q102 38 98 42 L95 45 Q90 35 85 32 Q80 28 75 26 Q70 25 65 26 Q60 28 55 32 Q50 36 45 42 Z"
+                                fill="url(#nafHairGrad)" stroke="#1a1a1a" stroke-width="1" />
+                            <!-- Hair highlights -->
+                            <path d="M60 28 Q70 26 80 28" stroke="#6a6a6a" stroke-width="1" opacity="0.3" fill="none" />
+                            <!-- Eyes -->
+                            <ellipse cx="60" cy="48" rx="5" ry="6" fill="#fff" />
+                            <ellipse cx="80" cy="48" rx="5" ry="6" fill="#fff" />
+                            <circle cx="60" cy="50" r="3" fill="#4a8a7a" />
+                            <circle cx="80" cy="50" r="3" fill="#4a8a7a" />
+                            <!-- Eye highlights -->
+                            <circle cx="61" cy="49" r="1.5" fill="#fff" opacity="0.8" />
+                            <circle cx="81" cy="49" r="1.5" fill="#fff" opacity="0.8" />
+                            <!-- Eyebrows (serious) -->
+                            <line x1="55" y1="42" x2="64" y2="44" stroke="#2a2a2a" stroke-width="2" />
+                            <line x1="76" y1="44" x2="85" y2="42" stroke="#2a2a2a" stroke-width="2" />
+                            <!-- Mouth (determined) -->
+                            <line x1="65" y1="60" x2="75" y2="60" stroke="#d4a394" stroke-width="1.5" />
                         </svg>
                     </div>
                 </div>
 
-                <div class="loader-sub">Preparing your quest...</div>
-                <div class="loader-progress-wrapper">
-                    <div class="loader-bar" id="loaderBar">
-                        <div class="loader-fill" id="loaderFill"></div>
+                <div class="loader-sub">Preparing your quest</div>
+
+                <!-- Enhanced Progress Bar -->
+                <div class="loader-progress-container">
+                    <div class="loader-progress-bar">
+                        <div class="loader-progress-fill" id="loaderProgress"></div>
                     </div>
-                    <div class="loader-percentage" id="loaderPercentage">0%</div>
+                    <div class="loader-progress-text">
+                        <span id="loaderPercent">0%</span>
+                        <span id="loaderStatus">Loading assets...</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,7 +317,7 @@
             <div class="subtitle">Embrace the Curse Series</div>
 
             <!-- THEME TOGGLE -->
-            <div style="margin-top:12px;">
+            <div style="margin-top:12px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                 <button id="themeToggle" class="btn-theme" aria-pressed="false">
                     <span class="shimmer"></span>
                     <span class="theme-icon">
@@ -170,16 +350,19 @@
                     yourself worthy!</p>
             </div>
             <div class="input-group">
-                <label class="input-label"><span class="icon-user"></span> Enter Your Hero Name</label>
-                <input type="text" id="playerName" class="hero-input" placeholder="Your hero name..." maxlength="30">
+                <label class="input-label"><span class="icon-user">👤</span> Enter Your Hero Name</label>
+                <input type="text" id="playerName" class="hero-input" placeholder="Your hero name..." maxlength="30"
+                    autocomplete="off">
+                <div class="input-hint">Choose a name worthy of a legendary hero!</div>
             </div>
             <div class="input-group">
-                <label class="input-label"><span class="icon-sword"></span> Select Difficulty</label>
+                <label class="input-label"><span class="icon-sword">⚔️</span> Select Difficulty</label>
                 <select id="difficulty" class="difficulty-select">
                     <option value="easy">🟢 Easy</option>
                     <option value="medium" selected>🟡 Medium</option>
                     <option value="hard">🔴 Hard</option>
                 </select>
+                <div class="input-hint">Higher difficulty = Greater glory!</div>
             </div>
             <button id="startBtn" class="btn btn-primary btn-large">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -538,7 +721,34 @@
                 </div>
             </div>
             <div class="score-message" id="scoreMessage"></div>
+
+            <!-- Detailed Stats -->
+            <div class="results-stats">
+                <div class="results-stat-item">
+                    <div class="results-stat-icon">⏱️</div>
+                    <div class="results-stat-content">
+                        <div class="results-stat-label">Time Taken</div>
+                        <div class="results-stat-value" id="timeTaken">0:00</div>
+                    </div>
+                </div>
+                <div class="results-stat-item">
+                    <div class="results-stat-icon">⚡</div>
+                    <div class="results-stat-content">
+                        <div class="results-stat-label">Avg. Speed</div>
+                        <div class="results-stat-value" id="avgSpeed">0s/q</div>
+                    </div>
+                </div>
+                <div class="results-stat-item">
+                    <div class="results-stat-icon">🎯</div>
+                    <div class="results-stat-content">
+                        <div class="results-stat-label">Accuracy</div>
+                        <div class="results-stat-value" id="accuracy">0%</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="achievement-badges" id="achievementBadges"></div>
+
             <button id="restartBtn" class="btn btn-primary btn-large">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                     <path d="M12 2C8 2 4 4 4 4v12c0 8 8 12 8 12s8-4 8-12V4S16 2 12 2z" />

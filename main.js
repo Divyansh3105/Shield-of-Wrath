@@ -167,6 +167,53 @@ let timeRemaining = 0;
 let difficultyLevel = "medium";
 let playerName = "";
 let quizStartTime = null;
+let soundEnabled = true;
+let bestScore = 0;
+let totalAttempts = 0;
+
+// Sound effects (using Web Audio API for simple beeps)
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+const audioContext = new AudioContextClass();
+
+function playSound(frequency, duration, type = "sine") {
+  if (!soundEnabled) return;
+
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+
+  oscillator.frequency.value = frequency;
+  oscillator.type = type;
+
+  gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(
+    0.01,
+    audioContext.currentTime + duration
+  );
+
+  oscillator.start(audioContext.currentTime);
+  oscillator.stop(audioContext.currentTime + duration);
+}
+
+function playClickSound() {
+  playSound(800, 0.1);
+}
+
+function playSuccessSound() {
+  playSound(523.25, 0.15);
+  setTimeout(() => playSound(659.25, 0.15), 100);
+  setTimeout(() => playSound(783.99, 0.2), 200);
+}
+
+function playErrorSound() {
+  playSound(200, 0.2, "sawtooth");
+}
+
+function playTransitionSound() {
+  playSound(440, 0.08);
+}
 
 const correctAnswers = [
   "Naofumi Iwatani",
@@ -202,6 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("restartBtn").addEventListener("click", restartQuiz);
   $("difficulty").addEventListener("change", (e) => {
     difficultyLevel = e.target.value;
+    playClickSound();
   });
   $("playerName").addEventListener("keypress", (e) => {
     if (e.key === "Enter") startQuiz();
@@ -215,81 +263,107 @@ document.addEventListener("DOMContentLoaded", () => {
    Loading screen + character controls
    ============================ */
 const loadingScreen = document.getElementById("loadingScreen");
-const loaderFill = document.getElementById("loaderFill");
-const loaderPercentage = document.getElementById("loaderPercentage");
-let loaderProgress = 0;
-let loaderTimer = null;
 
 function showLoadingScreen() {
   if (!loadingScreen) return;
   loadingScreen.classList.remove("hidden");
   loadingScreen.setAttribute("aria-hidden", "false");
-  loaderProgress = 0;
-  if (loaderTimer) clearInterval(loaderTimer);
-  loaderFill.style.width = "0%";
-  if (loaderPercentage) loaderPercentage.textContent = "0%";
-
-  // faux progress to feel cinematic; real assets can bump it via setLoadingProgress()
-  loaderTimer = setInterval(() => {
-    loaderProgress += Math.random() * 10; // random step
-    if (loaderProgress >= 95) {
-      loaderProgress = 95;
-      clearInterval(loaderTimer);
-    }
-    const roundedProgress = Math.round(loaderProgress);
-    loaderFill.style.width = roundedProgress + "%";
-    if (loaderPercentage) loaderPercentage.textContent = roundedProgress + "%";
-  }, 420);
 }
 
 function hideLoadingScreen(instant = false) {
   if (!loadingScreen) return;
-  // fill to 100% then fade
-  loaderFill.style.width = "100%";
-  if (loaderPercentage) loaderPercentage.textContent = "100%";
   setTimeout(
     () => {
       loadingScreen.classList.add("hidden");
       loadingScreen.setAttribute("aria-hidden", "true");
-      // clean up
-      if (loaderTimer) {
-        clearInterval(loaderTimer);
-        loaderTimer = null;
-      }
     },
-    instant ? 80 : 480
+    instant ? 80 : 800
   );
-}
-
-/* Allow other parts of app to report progress (e.g. images, fonts) */
-function setLoadingProgress(percent) {
-  loaderProgress = Math.max(0, Math.min(100, percent));
-  if (loaderFill) loaderFill.style.width = loaderProgress + "%";
-  if (loaderPercentage)
-    loaderPercentage.textContent = Math.round(loaderProgress) + "%";
-  if (loaderProgress >= 100) hideLoadingScreen();
 }
 
 /* Preload high-res images / important assets then hide loader */
 function preloadImportantAssets(list = []) {
   if (!list.length) {
     // short delay so loader doesn't vanish immediately on fast loads
-    setTimeout(() => hideLoadingScreen(), 600);
+    simulateLoading();
     return;
   }
+
   let loaded = 0;
-  list.forEach((src) => {
+  const progressBar = document.getElementById("loaderProgress");
+  const progressPercent = document.getElementById("loaderPercent");
+  const progressStatus = document.getElementById("loaderStatus");
+
+  const statuses = [
+    "Loading assets...",
+    "Summoning heroes...",
+    "Preparing shields...",
+    "Charging particles...",
+    "Almost ready...",
+  ];
+
+  list.forEach((src, index) => {
     const img = new Image();
     img.onload = img.onerror = () => {
       loaded++;
-      setLoadingProgress(Math.round((loaded / list.length) * 100));
+      const percent = Math.floor((loaded / list.length) * 100);
+
+      if (progressBar) progressBar.style.width = percent + "%";
+      if (progressPercent) progressPercent.textContent = percent + "%";
+      if (progressStatus) {
+        const statusIndex = Math.min(
+          Math.floor((loaded / list.length) * statuses.length),
+          statuses.length - 1
+        );
+        progressStatus.textContent = statuses[statusIndex];
+      }
+
       if (loaded === list.length) {
-        // small delay for polish
-        setTimeout(() => hideLoadingScreen(), 360);
+        setTimeout(() => {
+          if (progressStatus) progressStatus.textContent = "Ready!";
+          setTimeout(() => hideLoadingScreen(), 500);
+        }, 300);
       }
     };
     img.src = src;
   });
+}
+
+function simulateLoading() {
+  const progressBar = document.getElementById("loaderProgress");
+  const progressPercent = document.getElementById("loaderPercent");
+  const progressStatus = document.getElementById("loaderStatus");
+
+  const statuses = [
+    "Loading assets...",
+    "Summoning heroes...",
+    "Preparing shields...",
+    "Charging particles...",
+    "Almost ready...",
+    "Ready!",
+  ];
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 15 + 5;
+    if (progress > 100) progress = 100;
+
+    if (progressBar) progressBar.style.width = progress + "%";
+    if (progressPercent)
+      progressPercent.textContent = Math.floor(progress) + "%";
+    if (progressStatus) {
+      const statusIndex = Math.min(
+        Math.floor((progress / 100) * (statuses.length - 1)),
+        statuses.length - 1
+      );
+      progressStatus.textContent = statuses[statusIndex];
+    }
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => hideLoadingScreen(), 500);
+    }
+  }, 200);
 }
 
 /* Pause character float animations (useful when quiz begins) */
@@ -341,7 +415,6 @@ document.addEventListener("DOMContentLoaded", () => {
 /* Optional: expose to window for debugging */
 window.showLoadingScreen = showLoadingScreen;
 window.hideLoadingScreen = hideLoadingScreen;
-window.setLoadingProgress = setLoadingProgress;
 window.setCharacterFloating = setCharacterFloating;
 
 function bindOptionListeners() {
@@ -359,6 +432,9 @@ function bindOptionListeners() {
 
       // Add ripple effect
       createRipple(this, e);
+
+      // Play click sound
+      playClickSound();
     });
   });
 }
@@ -403,56 +479,64 @@ document.addEventListener("keydown", (e) => {
     `.question-set.active .option input`
   );
 
-  let index = [...options].findIndex((o) => o.checked);
+  let currentIndex = [...options].findIndex((o) => o.checked);
 
   // -------------------------
-  // 1. ArrowRight (Next question)
-  // -------------------------
-  if (e.key === "ArrowRight") {
-    if (currentQuestion < totalQuestions - 1) {
-      nextQuestion();
-    }
-    // If last question, ignore ArrowRight completely
-    return;
-  }
-
-  // -------------------------
-  // 2. ArrowLeft (Previous question)
-  // -------------------------
-  if (e.key === "ArrowLeft") {
-    if (currentQuestion > 0) previousQuestion();
-    return;
-  }
-
-  // -------------------------
-  // 3. Enter (Next / Finish)
-  // -------------------------
-  if (e.key === "Enter") {
-    nextQuestion();
-    return;
-  }
-
-  // -------------------------
-  // 4. ArrowDown (Move down options)
+  // 1. ArrowDown (Move down options)
   // -------------------------
   if (e.key === "ArrowDown") {
     e.preventDefault();
-    if (index < options.length - 1) index++;
-    else index = 0; // wrap around
-
-    selectOptionByIndex(options, index);
+    if (currentIndex < options.length - 1) {
+      currentIndex++;
+    } else {
+      currentIndex = 0; // wrap around
+    }
+    selectOptionByIndex(options, currentIndex);
     return;
   }
 
   // -------------------------
-  // 5. ArrowUp (Move up options)
+  // 2. ArrowUp (Move up options)
   // -------------------------
   if (e.key === "ArrowUp") {
     e.preventDefault();
-    if (index > 0) index--;
-    else index = options.length - 1; // wrap up
+    if (currentIndex > 0) {
+      currentIndex--;
+    } else {
+      currentIndex = options.length - 1; // wrap up
+    }
+    selectOptionByIndex(options, currentIndex);
+    return;
+  }
 
-    selectOptionByIndex(options, index);
+  // -------------------------
+  // 3. ArrowRight (Next question)
+  // -------------------------
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    if (currentQuestion < totalQuestions - 1) {
+      nextQuestion();
+    }
+    return;
+  }
+
+  // -------------------------
+  // 4. ArrowLeft (Previous question)
+  // -------------------------
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    if (currentQuestion > 0) {
+      previousQuestion();
+    }
+    return;
+  }
+
+  // -------------------------
+  // 5. Enter (Next / Finish)
+  // -------------------------
+  if (e.key === "Enter") {
+    e.preventDefault();
+    nextQuestion();
     return;
   }
 });
@@ -476,11 +560,16 @@ function startQuiz() {
   if (!playerName) {
     showAlert("Please enter your hero name!");
     $("playerName").focus();
+    playErrorSound();
     return;
   }
 
-  if (currentMode === "shield") playShieldMusic();
-  else playWrathMusic();
+  if (soundEnabled) {
+    if (currentMode === "shield") playShieldMusic();
+    else playWrathMusic();
+  }
+
+  playSuccessSound();
 
   $("startScreen").classList.add("hidden");
   $("quiz").classList.remove("hidden");
@@ -574,8 +663,11 @@ function nextQuestion() {
   if (!selectedAnswer) {
     showAlert("Please select an answer!");
     shakeElement($("quiz"));
+    playErrorSound();
     return;
   }
+
+  playTransitionSound();
 
   if (currentQuestion < totalQuestions - 1) {
     currentQuestion++;
@@ -596,6 +688,7 @@ function shakeElement(element) {
 
 function previousQuestion() {
   if (currentQuestion > 0) {
+    playTransitionSound();
     currentQuestion--;
     showQuestion();
     startTimer();
@@ -660,6 +753,9 @@ function showResults() {
     (m) => totalScore >= m.min
   ).text;
 
+  // Update detailed stats
+  updateDetailedStats(totalTime, percentage);
+
   // Display achievements
   displayAchievements(totalScore, totalTime);
 
@@ -667,6 +763,21 @@ function showResults() {
   if (percentage >= 80) {
     setTimeout(() => triggerConfetti(), 500);
   }
+}
+
+function updateDetailedStats(totalTime, percentage) {
+  // Format time taken (MM:SS)
+  const minutes = Math.floor(totalTime / 60);
+  const seconds = totalTime % 60;
+  const timeFormatted = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  $("timeTaken").textContent = timeFormatted;
+
+  // Calculate average speed per question
+  const avgTimePerQuestion = Math.round(totalTime / totalQuestions);
+  $("avgSpeed").textContent = `${avgTimePerQuestion}s/q`;
+
+  // Display accuracy
+  $("accuracy").textContent = percentage + "%";
 }
 
 function displayAchievements(score, time) {
@@ -741,7 +852,7 @@ function updateThemeVisuals() {
   updateSVGColors();
 }
 
-themeToggleBtn.addEventListener("click", (e) => {
+themeToggleBtn.addEventListener("click", () => {
   document.body.classList.toggle("shield-mode");
   const isShield = document.body.classList.contains("shield-mode");
 
@@ -822,7 +933,7 @@ function updateSVGColors() {
 }
 
 // Particle burst effect for theme toggle
-function createThemeParticleBurst(event) {
+function createThemeParticleBurst() {
   const colors =
     currentMode === "wrath"
       ? ["#ff4444", "#ff8800", "#ffcc00", "#ff6666"]
@@ -893,3 +1004,133 @@ function triggerConfetti() {
     }, i * 30);
   }
 }
+
+// ============ SOUND TOGGLE ============
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const soundToggle = $("soundToggle");
+
+  if (soundEnabled) {
+    soundToggle.textContent = "🔊";
+    soundToggle.setAttribute("aria-label", "Mute sound");
+    if (currentMode === "shield") playShieldMusic();
+    else playWrathMusic();
+  } else {
+    soundToggle.textContent = "🔇";
+    soundToggle.setAttribute("aria-label", "Unmute sound");
+    wrathMusic.pause();
+    shieldMusic.pause();
+  }
+
+  localStorage.setItem(
+    "shieldhero-sound",
+    soundEnabled ? "enabled" : "disabled"
+  );
+  playClickSound();
+}
+
+function initSoundPreference() {
+  const saved = localStorage.getItem("shieldhero-sound");
+  soundEnabled = saved !== "disabled";
+
+  const soundToggle = $("soundToggle");
+  if (soundToggle) {
+    soundToggle.textContent = soundEnabled ? "🔊" : "🔇";
+    soundToggle.setAttribute(
+      "aria-label",
+      soundEnabled ? "Mute sound" : "Unmute sound"
+    );
+  }
+}
+
+// ============ STATS TRACKING ============
+function loadStats() {
+  const stats = JSON.parse(localStorage.getItem("shieldhero-stats") || "{}");
+  bestScore = stats.bestScore || 0;
+  totalAttempts = stats.totalAttempts || 0;
+  updateStartScreenStats();
+}
+
+function updateStartScreenStats() {
+  const bestScoreEl = $("bestScore");
+  const totalAttemptsEl = $("totalAttempts");
+
+  if (bestScoreEl) {
+    bestScoreEl.textContent = `${bestScore}/${totalQuestions}`;
+  }
+  if (totalAttemptsEl) {
+    totalAttemptsEl.textContent = totalAttempts;
+  }
+}
+
+function saveStats() {
+  const newBestScore = Math.max(bestScore, totalScore);
+  const newTotalAttempts = totalAttempts + 1;
+
+  const stats = {
+    bestScore: newBestScore,
+    totalAttempts: newTotalAttempts,
+    lastPlayed: new Date().toISOString(),
+  };
+
+  localStorage.setItem("shieldhero-stats", JSON.stringify(stats));
+
+  // Update global variables
+  bestScore = newBestScore;
+  totalAttempts = newTotalAttempts;
+
+  // Update display
+  updateStartScreenStats();
+}
+
+// Call saveStats when showing results
+const originalShowResults = showResults;
+showResults = function () {
+  originalShowResults();
+  saveStats();
+};
+
+// ============ ANIMATIONS ============
+// Add CSS animations dynamically
+const style = document.createElement("style");
+style.textContent = `
+  @keyframes rippleEffect {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+  }
+
+  @keyframes buttonShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+  }
+
+  @keyframes particleBurst {
+    to {
+      transform: translate(
+        calc(cos(var(--angle)) * var(--velocity)),
+        calc(sin(var(--angle)) * var(--velocity))
+      );
+      opacity: 0;
+    }
+  }
+
+  @keyframes confettiFall {
+    to {
+      transform: translateY(100vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+`;
+document.head.appendChild(style);
+
+console.log("🛡️ Shield Hero Quiz initialized!");
