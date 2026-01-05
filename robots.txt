@@ -1,4 +1,16 @@
-user-agent: *
-allow:
-disallow:
-sitemap:
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://divyansh3105.github.io/Shield-of-Wrath/sitemap.xml
+
+# Disallow crawling of asset files that don't need indexing
+Disallow: /asset/*.mp3
+Disallow: /asset/*.cur
+Disallow: /desktop.ini
+
+# Allow all other content
+Allow: /asset/
+Allow: /*.html
+Allow: /*.css
+Allow: /*.js
