@@ -1,4 +1,4 @@
-/* Default: WRATH MODE variables (keeps original palette) */
+/* Default: WRATH MODE variables*/
 :root {
   --mode: "wrath";
   --primary: #ff4444;
@@ -28,6 +28,10 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --transition: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  min-height: 100vh;
 }
 
 /* SHIELD MODE overrides */
@@ -86,9 +90,15 @@ option,
   cursor: url("asset/Cursor.cur") 32 32, auto !important;
 }
 
-/* Base layout - Critical styles moved to inline */
 html {
   scroll-behavior: smooth;
+  font-size-adjust: 0.52;
+}
+
+.glow-text,
+.results h2,
+.loader-text {
+  line-height: 1.15;
 }
 
 /* Background Layers */
@@ -115,15 +125,18 @@ body.shield-mode #bg-image {
   height: 100%;
   z-index: -1;
   pointer-events: none;
-  will-change: auto; /* Optimize for performance */
+  will-change: auto;
 }
 
-/* Container - Optimized animations */
 .container {
   box-shadow: 0 0 50px var(--glow-1), 0 0 100px rgba(255, 68, 68, 0.3),
     0 20px 60px rgba(0, 0, 0, 0.4), inset 0 0 80px rgba(255, 68, 68, 0.08);
-  animation: containerGlow 4s infinite ease-in-out, containerFadeIn 1s ease;
-  will-change: box-shadow; /* Optimize for animations */
+  animation: containerGlow 4s infinite ease-in-out;
+  will-change: box-shadow;
+}
+
+.container.entered {
+  animation: containerFadeIn 0.6s ease;
 }
 
 @keyframes containerFadeIn {
@@ -154,7 +167,7 @@ body.shield-mode .container {
   }
 }
 
-/* Header - Optimized */
+/* Header*/
 .quiz-header {
   text-align: center;
   margin-bottom: 35px;
@@ -192,7 +205,6 @@ body.shield-mode .quiz-header {
   border-bottom-color: rgba(0, 200, 200, 0.2);
 }
 
-/* Optimized animations using transform and opacity only */
 .shield-logo {
   animation: shieldFloat 3s infinite ease-in-out;
   filter: drop-shadow(0 0 25px var(--glow-1));
@@ -246,7 +258,7 @@ body.shield-mode .quiz-header {
   margin-top: 8px;
 }
 
-/* Theme Toggle - Enhanced Design */
+/* Theme Toggle*/
 .btn-theme {
   min-width: 180px;
   white-space: nowrap;
@@ -368,7 +380,7 @@ body.shield-mode .btn-theme:hover {
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
 
-/* Icon visibility toggle with enhanced animations */
+/* Icon visibility toggle*/
 .icon-wrath,
 .icon-shield {
   position: absolute;
@@ -409,7 +421,7 @@ body.shield-mode .icon-shield {
   }
 }
 
-/* Text label switcher with enhanced transitions */
+/* Text label switcher*/
 .theme-text {
   position: relative;
   margin-left: 4px;
@@ -2002,7 +2014,9 @@ body.shield-mode .loader-progress-bar {
 
 /* Utility */
 .hidden {
-  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 /* Shake animation for validation */
@@ -2101,7 +2115,7 @@ select:focus-visible,
   }
 }
 
-/* Loading screen - Performance optimized */
+/* Loading screen*/
 #loadingScreen {
   position: fixed;
   inset: 0;
@@ -2133,7 +2147,6 @@ select:focus-visible,
   transform: scale(0.95);
 }
 
-/* Simplified loader animations for better performance */
 .loader-wrap {
   text-align: center;
   display: flex;
@@ -2276,6 +2289,15 @@ select:focus-visible,
 }
 
 .loader-text {
+  min-height: 32px;
+  line-height: 1.2;
+}
+
+.loader-sub {
+  min-height: 22px;
+}
+
+.loader-text {
   font-weight: 900;
   font-family: "Cinzel", serif;
   background: linear-gradient(
@@ -2387,9 +2409,6 @@ select:focus-visible,
   }
 }
 
-/* Progress bar elements removed - not in HTML */
-
-/* floating characters */
 .floating-characters {
   position: relative;
   display: flex;
@@ -2473,7 +2492,6 @@ select:focus-visible,
     drop-shadow(0 0 15px rgba(255, 68, 68, 0.3));
 }
 
-/* enhanced bobbing motion with more personality */
 .char-raphtalia {
   animation: floatLeftEnhanced 4.2s ease-in-out infinite,
     charGlowLeft 3s ease-in-out infinite;
@@ -2662,8 +2680,6 @@ body.shield-mode #loaderShield {
     drop-shadow(0 0 50px rgba(0, 255, 170, 0.6))
     drop-shadow(0 0 70px rgba(51, 255, 204, 0.3));
 }
-
-/* Shield mode loader-bar and loader-fill removed - not in HTML */
 
 body.shield-mode .floating-characters::before {
   background: radial-gradient(

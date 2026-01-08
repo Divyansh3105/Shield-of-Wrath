@@ -5,12 +5,12 @@ let audioLoaded = false;
 
 // Intersection Observer for lazy loading
 const lazyLoadObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     if (entry.isIntersecting) {
       const img = entry.target;
       if (img.dataset.src) {
         img.src = img.dataset.src;
-        img.removeAttribute('data-src');
+        img.removeAttribute("data-src");
         lazyLoadObserver.unobserve(img);
       }
     }
@@ -56,6 +56,9 @@ function resizeCanvas() {
 
 resizeCanvas();
 window.addEventListener("resize", debouncedResize);
+window.addEventListener("load", () => {
+  document.querySelector(".container")?.classList.add("entered");
+});
 
 // FIRE particle class (Wrath)
 class FireParticle {
@@ -201,7 +204,8 @@ function animateParticles(currentTime) {
   }
 
   // Performance monitoring
-  if (currentTime - lastFrameTime > 16.67) { // If frame takes longer than 60fps
+  if (currentTime - lastFrameTime > 16.67) {
+    // If frame takes longer than 60fps
     frameCount++;
     if (frameCount > 10) {
       isLowPerformance = true;
@@ -237,17 +241,17 @@ animateParticles();
 // ============ IMAGE OPTIMIZATION ============
 // Lazy load images with intersection observer
 function setupLazyLoading() {
-  const lazyImages = document.querySelectorAll('img[data-src]');
+  const lazyImages = document.querySelectorAll("img[data-src]");
 
-  if ('IntersectionObserver' in window) {
-    lazyImages.forEach(img => {
+  if ("IntersectionObserver" in window) {
+    lazyImages.forEach((img) => {
       lazyLoadObserver.observe(img);
     });
   } else {
     // Fallback for older browsers
-    lazyImages.forEach(img => {
+    lazyImages.forEach((img) => {
       img.src = img.dataset.src;
-      img.removeAttribute('data-src');
+      img.removeAttribute("data-src");
     });
   }
 }
@@ -260,8 +264,8 @@ function optimizeCanvas() {
 
   canvas.width = window.innerWidth * pixelRatio;
   canvas.height = window.innerHeight * pixelRatio;
-  canvas.style.width = window.innerWidth + 'px';
-  canvas.style.height = window.innerHeight + 'px';
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
 
   ctx.scale(pixelRatio, pixelRatio);
 
@@ -509,10 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
   showLoadingScreen();
 
   // find background images used by page (optimized list)
-  const bgImages = [
-    "asset/shieldhero.webp",
-    "asset/shieldmode.webp",
-  ];
+  const bgImages = ["asset/shieldhero.webp", "asset/shieldmode.webp"];
 
   // preload them and wait to hide loader
   preloadImportantAssets(bgImages);
