@@ -62,10 +62,8 @@ body.shield-mode {
 /* Optimized global styles */
 * {
   transition: color 0.3s var(--transition),
-    background-color 0.3s var(--transition),
-    border-color 0.3s var(--transition),
-    box-shadow 0.3s var(--transition),
-    transform 0.25s var(--transition);
+    background-color 0.3s var(--transition), border-color 0.3s var(--transition),
+    box-shadow 0.3s var(--transition), transform 0.25s var(--transition);
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -97,6 +95,12 @@ html {
 body.shield-mode #bg-image {
   background-image: url("asset/shieldmode.webp");
   filter: saturate(1.04) contrast(1.02);
+}
+
+#bg-image,
+#bg-overlay {
+  width: 100vw;
+  height: 100vh;
 }
 
 #bg-overlay {
@@ -1545,6 +1549,12 @@ body.shield-mode .footer {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .char,
+  .container,
+  .btn-theme {
+    animation: none !important;
+  }
+
   .container {
     width: min(100% - 30px, 900px);
     padding: 32px 24px;
@@ -1568,8 +1578,8 @@ body.shield-mode .footer {
   }
 
   .shield-logo svg {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
   }
 
   .stats-panel {

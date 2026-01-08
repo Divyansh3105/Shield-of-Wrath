@@ -29,19 +29,20 @@
     <link rel="preload" as="image" href="asset/shieldmode.webp" />
     <link rel="preload" as="font" href="https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecg.woff2"
         type="font/woff2" crossorigin>
-    <link rel="preload" as="font" href="https://fonts.gstatic.com/s/cinzel/v23/8vIJ7wMr0my-WxlCxLjy.woff2"
-        type="font/woff2" crossorigin>
 
-    <!-- Fonts: optimized loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&family=Cinzel:wght@400;600;900&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
+
 
     <!-- Inline critical CSS -->
     <style>
+        html {
+            font-size-adjust: 0.52;
+        }
+
         body {
+            height: 100vh;
             font-family: "Poppins", sans-serif;
             min-height: 100vh;
             padding: 0;
@@ -71,6 +72,10 @@
             height: 100%;
             background: linear-gradient(135deg, rgba(139, 0, 0, 0.3) 0%, rgba(10, 0, 0, 0.6) 50%, rgba(50, 0, 0, 0.4) 100%);
             z-index: -2
+        }
+
+        .glow-text {
+            min-height: 48px;
         }
 
         .container {
@@ -106,11 +111,11 @@
     <!-- Load full CSS non-blocking -->
     <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'">
     <noscript>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css?v=1.2">
     </noscript>
 
     <!-- Defer JS -->
-    <script src="main.js" defer></script>
+    <script src="main.js?v=1.2" defer></script>
 
 </head>
 
@@ -445,7 +450,9 @@
                 <div class="input-hint">Choose a name worthy of a legendary hero!</div>
             </div>
             <div class="input-group">
-                <label class="input-label"><span class="icon-sword">⚔️</span> Select Difficulty</label>
+                <label for="difficulty" class="input-label">
+                    <span class="icon-sword">⚔️</span> Select Difficulty
+                </label>
                 <select id="difficulty" class="difficulty-select">
                     <option value="easy">🟢 Easy</option>
                     <option value="medium" selected>🟡 Medium</option>
