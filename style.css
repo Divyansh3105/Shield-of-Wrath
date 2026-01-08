@@ -59,11 +59,12 @@ body.shield-mode {
   );
 }
 
-/* Global smoothing for color/box changes */
+/* Optimized global styles */
 * {
-  transition: color 0.35s var(--transition),
-    background-color 0.45s var(--transition),
-    border-color 0.35s var(--transition), box-shadow 0.45s var(--transition),
+  transition: color 0.3s var(--transition),
+    background-color 0.3s var(--transition),
+    border-color 0.3s var(--transition),
+    box-shadow 0.3s var(--transition),
     transform 0.25s var(--transition);
   box-sizing: border-box;
   margin: 0;
@@ -72,10 +73,7 @@ body.shield-mode {
 }
 
 /* Cursor auto-hide */
-body.cursor-hidden {
-  cursor: none !important;
-}
-
+body.cursor-hidden,
 body.cursor-hidden * {
   cursor: none !important;
 }
@@ -90,48 +88,18 @@ option,
   cursor: url("asset/Cursor.cur") 32 32, auto !important;
 }
 
-/* Base layout */
+/* Base layout - Critical styles moved to inline */
 html {
   scroll-behavior: smooth;
 }
 
-body {
-  font-family: "Poppins", sans-serif;
-  min-height: 100vh;
-  padding: 0;
-  color: var(--text-light);
-  background: transparent;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
 /* Background Layers */
-#bg-image {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: url(asset/shieldhero.png) no-repeat center center/cover;
-  z-index: -3;
-  transition: filter 0.6s ease, opacity 0.6s ease;
-}
-
 body.shield-mode #bg-image {
-  background-image: url("asset/shieldmode.jpg");
+  background-image: url("asset/shieldmode.webp");
   filter: saturate(1.04) contrast(1.02);
 }
 
 #bg-overlay {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg-overlay-wrath);
-  z-index: -2;
   transition: background 0.6s ease;
 }
 
@@ -143,25 +111,15 @@ body.shield-mode #bg-image {
   height: 100%;
   z-index: -1;
   pointer-events: none;
+  will-change: auto; /* Optimize for performance */
 }
 
-/* Container */
+/* Container - Optimized animations */
 .container {
-  width: min(100% - 40px, 900px);
-  max-width: 900px;
-  height: auto;
-  background: var(--container-bg-wrath);
-  border: 2px solid var(--primary);
-  border-radius: 24px;
   box-shadow: 0 0 50px var(--glow-1), 0 0 100px rgba(255, 68, 68, 0.3),
     0 20px 60px rgba(0, 0, 0, 0.4), inset 0 0 80px rgba(255, 68, 68, 0.08);
-  padding: 40px 32px;
-  margin: 20px auto;
-  position: relative;
-  z-index: 1;
   animation: containerGlow 4s infinite ease-in-out, containerFadeIn 1s ease;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  will-change: box-shadow; /* Optimize for animations */
 }
 
 @keyframes containerFadeIn {
@@ -192,7 +150,7 @@ body.shield-mode .container {
   }
 }
 
-/* Header */
+/* Header - Optimized */
 .quiz-header {
   text-align: center;
   margin-bottom: 35px;
@@ -211,6 +169,7 @@ body.shield-mode .container {
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--primary), transparent);
   animation: headerLineGlow 2s ease-in-out infinite;
+  will-change: opacity, width;
 }
 
 @keyframes headerLineGlow {
@@ -229,9 +188,11 @@ body.shield-mode .quiz-header {
   border-bottom-color: rgba(0, 200, 200, 0.2);
 }
 
+/* Optimized animations using transform and opacity only */
 .shield-logo {
   animation: shieldFloat 3s infinite ease-in-out;
   filter: drop-shadow(0 0 25px var(--glow-1));
+  will-change: transform;
 }
 
 @keyframes shieldFloat {
@@ -263,6 +224,7 @@ body.shield-mode .quiz-header {
   margin: 16px 0;
   letter-spacing: 2px;
   text-transform: uppercase;
+  will-change: background-position;
 }
 
 @keyframes textShine {
@@ -2129,9 +2091,7 @@ select:focus-visible,
   }
 }
 
-/* ============================
-   CUSTOM LOADING SCREEN + CHARACTERS
-   ============================ */
+/* Loading screen - Performance optimized */
 #loadingScreen {
   position: fixed;
   inset: 0;
@@ -2147,8 +2107,6 @@ select:focus-visible,
     rgba(25, 3, 3, 0.96) 75%,
     rgba(5, 0, 0, 1) 100%
   );
-  background-size: 400% 400%;
-  animation: loadingBgFlow 12s ease-in-out infinite;
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   opacity: 1;
@@ -2156,95 +2114,7 @@ select:focus-visible,
   transition: opacity 800ms cubic-bezier(0.4, 0, 0.2, 1),
     transform 800ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
   overflow: hidden;
-}
-
-/* Animated particles overlay */
-#loadingScreen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-      circle at 20% 30%,
-      rgba(255, 68, 68, 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 70%,
-      rgba(255, 136, 0, 0.12) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 80%,
-      rgba(255, 204, 0, 0.1) 0%,
-      transparent 50%
-    );
-  animation: particlesDrift 20s ease-in-out infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes particlesDrift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.3;
-  }
-  25% {
-    transform: translate(10%, -10%) scale(1.1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translate(-5%, 5%) scale(0.9);
-    opacity: 0.4;
-  }
-  75% {
-    transform: translate(-10%, -5%) scale(1.05);
-    opacity: 0.6;
-  }
-}
-
-@keyframes loadingBgFlow {
-  0% {
-    background-position: 0% 50%;
-  }
-  25% {
-    background-position: 50% 75%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  75% {
-    background-position: 50% 25%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-#loadingScreen::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 68, 68, 0.25) 0%,
-    rgba(255, 136, 0, 0.12) 30%,
-    transparent 60%
-  );
-  animation: loadingGlowPulse 4s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes loadingGlowPulse {
-  0%,
-  100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.2);
-  }
+  will-change: opacity, transform;
 }
 
 #loadingScreen.hidden {
@@ -2253,7 +2123,7 @@ select:focus-visible,
   transform: scale(0.95);
 }
 
-/* loader inner */
+/* Simplified loader animations for better performance */
 .loader-wrap {
   text-align: center;
   display: flex;
@@ -2263,6 +2133,7 @@ select:focus-visible,
   position: relative;
   z-index: 2;
 }
+
 .loader-stage {
   width: min(780px, 92%);
   max-width: 920px;
@@ -2276,101 +2147,22 @@ select:focus-visible,
     rgba(25, 5, 5, 0.8)
   );
   border: 3px solid rgba(255, 68, 68, 0.4);
-  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9), 0 0 100px rgba(255, 68, 68, 0.3),
-    0 0 40px rgba(255, 136, 0, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -3px 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9), 0 0 100px rgba(255, 68, 68, 0.3);
   backdrop-filter: blur(16px) brightness(1.1);
   -webkit-backdrop-filter: blur(16px) brightness(1.1);
-  animation: loaderStageFloat 5s ease-in-out infinite,
-    loaderStagePulse 3s ease-in-out infinite;
+  animation: loaderStageFloat 5s ease-in-out infinite;
   position: relative;
   overflow: hidden;
-}
-
-/* Inner glow effect */
-.loader-stage::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 28px;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(255, 68, 68, 0.08) 0%,
-    transparent 70%
-  );
-  animation: innerGlowPulse 4s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes innerGlowPulse {
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(0.95);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-@keyframes loaderStagePulse {
-  0%,
-  100% {
-    border-color: rgba(255, 68, 68, 0.4);
-  }
-  50% {
-    border-color: rgba(255, 136, 0, 0.6);
-  }
+  will-change: transform;
 }
 
 @keyframes loaderStageFloat {
   0%,
   100% {
     transform: translateY(0) scale(1);
-    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9), 0 0 100px rgba(255, 68, 68, 0.3),
-      0 0 40px rgba(255, 136, 0, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.1);
   }
   50% {
     transform: translateY(-12px) scale(1.02);
-    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.95),
-      0 0 120px rgba(255, 68, 68, 0.5), 0 0 60px rgba(255, 136, 0, 0.35),
-      inset 0 2px 0 rgba(255, 255, 255, 0.15);
-  }
-}
-
-.loader-stage::before {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: 28px;
-  background: linear-gradient(
-    135deg,
-    var(--primary),
-    var(--accent),
-    #ffcc00,
-    var(--accent),
-    var(--primary)
-  );
-  background-size: 300% 300%;
-  opacity: 0.25;
-  z-index: -1;
-  animation: loaderBorderShine 4s linear infinite;
-  filter: blur(12px);
-}
-
-@keyframes loaderBorderShine {
-  0% {
-    background-position: 0% 50%;
-    opacity: 0.25;
-  }
-  50% {
-    background-position: 100% 50%;
-    opacity: 0.4;
-  }
-  100% {
-    background-position: 200% 50%;
-    opacity: 0.25;
   }
 }
 

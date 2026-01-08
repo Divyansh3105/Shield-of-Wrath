@@ -1,3 +1,29 @@
+// ============ PERFORMANCE OPTIMIZATIONS ============
+// Lazy load heavy features
+let particlesLoaded = false;
+let audioLoaded = false;
+
+// Intersection Observer for lazy loading
+const lazyLoadObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        lazyLoadObserver.unobserve(img);
+      }
+    }
+  });
+});
+
+// Debounced resize handler
+let resizeTimeout;
+function debouncedResize() {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(resizeCanvas, 100);
+}
+
 // ============ AUTO-HIDE CURSOR ============
 let cursorTimeout;
 const CURSOR_HIDE_DELAY = 2000; // 2 seconds
@@ -29,7 +55,7 @@ function resizeCanvas() {
 }
 
 resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener("resize", debouncedResize);
 
 // FIRE particle class (Wrath)
 class FireParticle {
@@ -113,50 +139,139 @@ let fireParticles = [];
 let iceParticles = [];
 let currentMode = "wrath"; // 'wrath' or 'shield'
 
-// THEME MUSIC
-const wrathMusic = new Audio("asset/wrath.mp3");
-const shieldMusic = new Audio("asset/Shield.mp3");
+// THEME MUSIC - Lazy load audio
+let wrathMusic, shieldMusic;
 
-wrathMusic.loop = true;
-shieldMusic.loop = true;
-wrathMusic.volume = 0.6;
-shieldMusic.volume = 0.6;
+function initAudio() {
+  if (audioLoaded) return;
+
+  wrathMusic = new Audio("asset/wrath.mp3");
+  shieldMusic = new Audio("asset/Shield.mp3");
+
+  wrathMusic.loop = true;
+  shieldMusic.loop = true;
+  wrathMusic.volume = 0.6;
+  shieldMusic.volume = 0.6;
+
+  // Preload audio
+  wrathMusic.preload = "metadata";
+  shieldMusic.preload = "metadata";
+
+  audioLoaded = true;
+}
 
 // functions
 function playWrathMusic() {
-  shieldMusic.pause();
-  shieldMusic.currentTime = 0;
-  wrathMusic.play().catch(() => {});
+  initAudio();
+  if (shieldMusic) {
+    shieldMusic.pause();
+    shieldMusic.currentTime = 0;
+  }
+  wrathMusic?.play().catch(() => {});
 }
 
 function playShieldMusic() {
-  wrathMusic.pause();
-  wrathMusic.currentTime = 0;
-  shieldMusic.play().catch(() => {});
+  initAudio();
+  if (wrathMusic) {
+    wrathMusic.pause();
+    wrathMusic.currentTime = 0;
+  }
+  shieldMusic?.play().catch(() => {});
 }
 
-// initialize
-for (let i = 0; i < 80; i++) fireParticles.push(new FireParticle());
-for (let i = 0; i < 60; i++) iceParticles.push(new IceParticle());
+// initialize particles lazily
+function initParticles() {
+  if (particlesLoaded) return;
 
-function animateParticles() {
+  for (let i = 0; i < 60; i++) fireParticles.push(new FireParticle()); // Reduced from 80
+  for (let i = 0; i < 40; i++) iceParticles.push(new IceParticle()); // Reduced from 60
+
+  particlesLoaded = true;
+}
+
+// Optimized particle system with performance monitoring
+let lastFrameTime = 0;
+let frameCount = 0;
+let isLowPerformance = false;
+
+function animateParticles(currentTime) {
+  if (!particlesLoaded) {
+    requestAnimationFrame(animateParticles);
+    return;
+  }
+
+  // Performance monitoring
+  if (currentTime - lastFrameTime > 16.67) { // If frame takes longer than 60fps
+    frameCount++;
+    if (frameCount > 10) {
+      isLowPerformance = true;
+      // Reduce particle count for low-end devices
+      if (fireParticles.length > 30) {
+        fireParticles = fireParticles.slice(0, 30);
+        iceParticles = iceParticles.slice(0, 20);
+      }
+    }
+  } else {
+    frameCount = Math.max(0, frameCount - 1);
+  }
+
+  lastFrameTime = currentTime;
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (currentMode === "wrath") {
-    fireParticles.forEach((p) => {
-      p.update();
-      p.draw();
-    });
-  } else {
-    iceParticles.forEach((p) => {
-      p.update();
-      p.draw();
-    });
+  const particles = currentMode === "wrath" ? fireParticles : iceParticles;
+  const maxParticles = isLowPerformance ? 20 : particles.length;
+
+  for (let i = 0; i < maxParticles; i++) {
+    particles[i].update();
+    particles[i].draw();
   }
 
   requestAnimationFrame(animateParticles);
 }
+
+// Start particles after a delay
+setTimeout(initParticles, 1000);
 animateParticles();
+
+// ============ IMAGE OPTIMIZATION ============
+// Lazy load images with intersection observer
+function setupLazyLoading() {
+  const lazyImages = document.querySelectorAll('img[data-src]');
+
+  if ('IntersectionObserver' in window) {
+    lazyImages.forEach(img => {
+      lazyLoadObserver.observe(img);
+    });
+  } else {
+    // Fallback for older browsers
+    lazyImages.forEach(img => {
+      img.src = img.dataset.src;
+      img.removeAttribute('data-src');
+    });
+  }
+}
+
+// Optimize canvas rendering
+function optimizeCanvas() {
+  // Use lower resolution on mobile devices
+  const isMobile = window.innerWidth < 768;
+  const pixelRatio = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+
+  canvas.width = window.innerWidth * pixelRatio;
+  canvas.height = window.innerHeight * pixelRatio;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+
+  ctx.scale(pixelRatio, pixelRatio);
+
+  // Optimize canvas context
+  ctx.imageSmoothingEnabled = !isMobile; // Disable on mobile for performance
+}
+
+function resizeCanvas() {
+  optimizeCanvas();
+}
 
 // ============ QUIZ LOGIC (original code merged) ============
 let currentQuestion = 0;
@@ -243,6 +358,10 @@ const $ = (id) => document.getElementById(id);
 
 // ============ EVENT LISTENERS & BINDINGS ============
 document.addEventListener("DOMContentLoaded", () => {
+  // Setup performance optimizations
+  setupLazyLoading();
+  optimizeCanvas();
+
   $("startBtn").addEventListener("click", startQuiz);
   $("prevBtn").addEventListener("click", previousQuestion);
   $("nextBtn").addEventListener("click", nextQuestion);
@@ -282,9 +401,9 @@ function hideLoadingScreen(instant = false) {
 }
 
 /* Preload high-res images / important assets then hide loader */
+/* Preload important assets then hide loader */
 function preloadImportantAssets(list = []) {
   if (!list.length) {
-    // short delay so loader doesn't vanish immediately on fast loads
     simulateLoading();
     return;
   }
@@ -298,34 +417,37 @@ function preloadImportantAssets(list = []) {
     "Loading assets...",
     "Summoning heroes...",
     "Preparing shields...",
-    "Charging particles...",
     "Almost ready...",
   ];
 
-  list.forEach((src, index) => {
-    const img = new Image();
-    img.onload = img.onerror = () => {
-      loaded++;
-      const percent = Math.floor((loaded / list.length) * 100);
+  // Use Promise.all for faster parallel loading
+  const imagePromises = list.map((src, index) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = img.onerror = () => {
+        loaded++;
+        const percent = Math.floor((loaded / list.length) * 100);
 
-      if (progressBar) progressBar.style.width = percent + "%";
-      if (progressPercent) progressPercent.textContent = percent + "%";
-      if (progressStatus) {
-        const statusIndex = Math.min(
-          Math.floor((loaded / list.length) * statuses.length),
-          statuses.length - 1
-        );
-        progressStatus.textContent = statuses[statusIndex];
-      }
+        if (progressBar) progressBar.style.width = percent + "%";
+        if (progressPercent) progressPercent.textContent = percent + "%";
+        if (progressStatus) {
+          const statusIndex = Math.min(
+            Math.floor((loaded / list.length) * statuses.length),
+            statuses.length - 1
+          );
+          progressStatus.textContent = statuses[statusIndex];
+        }
+        resolve();
+      };
+      img.src = src;
+    });
+  });
 
-      if (loaded === list.length) {
-        setTimeout(() => {
-          if (progressStatus) progressStatus.textContent = "Ready!";
-          setTimeout(() => hideLoadingScreen(), 500);
-        }, 300);
-      }
-    };
-    img.src = src;
+  Promise.all(imagePromises).then(() => {
+    setTimeout(() => {
+      if (progressStatus) progressStatus.textContent = "Ready!";
+      setTimeout(() => hideLoadingScreen(), 300);
+    }, 200);
   });
 }
 
@@ -338,14 +460,12 @@ function simulateLoading() {
     "Loading assets...",
     "Summoning heroes...",
     "Preparing shields...",
-    "Charging particles...",
-    "Almost ready...",
     "Ready!",
   ];
 
   let progress = 0;
   const interval = setInterval(() => {
-    progress += Math.random() * 15 + 5;
+    progress += Math.random() * 20 + 10; // Faster loading
     if (progress > 100) progress = 100;
 
     if (progressBar) progressBar.style.width = progress + "%";
@@ -361,9 +481,9 @@ function simulateLoading() {
 
     if (progress >= 100) {
       clearInterval(interval);
-      setTimeout(() => hideLoadingScreen(), 500);
+      setTimeout(() => hideLoadingScreen(), 300);
     }
-  }, 200);
+  }, 150); // Faster intervals
 }
 
 /* Pause character float animations (useful when quiz begins) */
@@ -388,11 +508,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // show loader right away
   showLoadingScreen();
 
-  // find background images used by page (simple heuristic)
+  // find background images used by page (optimized list)
   const bgImages = [
-    "asset/shieldhero.png",
-    "asset/shieldmode.jpg",
-    "asset/og-image.png",
+    "asset/shieldhero.webp",
+    "asset/shieldmode.webp",
   ];
 
   // preload them and wait to hide loader

@@ -2,9 +2,14 @@
 <html lang="en">
 
 <head>
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="asset/favicon.png">
+
+    <!-- Meta tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Test your knowledge of The Rising of the Shield Hero. Face the flames and prove yourself worthy!">
     <title>Shield of Wrath Quiz</title>
 
     <!-- Open Graph Meta Tags -->
@@ -19,10 +24,94 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://divyansh3105.github.io/Shield-of-Wrath/asset/og-image.png">
 
+    <!-- Critical resource hints -->
+    <link rel="preload" as="image" href="asset/shieldhero.webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="asset/shieldmode.webp" />
+    <link rel="preload" as="font" href="https://fonts.gstatic.com/s/poppins/v20/pxiEyp8kv8JHgFVrJJfecg.woff2"
+        type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="https://fonts.gstatic.com/s/cinzel/v23/8vIJ7wMr0my-WxlCxLjy.woff2"
+        type="font/woff2" crossorigin>
+
+    <!-- Fonts: optimized loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Poppins:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&family=Cinzel:wght@400;600;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Inline critical CSS -->
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            min-height: 100vh;
+            padding: 0;
+            color: #fff5f5;
+            background: transparent;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column
+        }
+
+        #bg-image {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: url(asset/shieldhero.webp) no-repeat center center/cover;
+            z-index: -3
+        }
+
+        #bg-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.3) 0%, rgba(10, 0, 0, 0.6) 50%, rgba(50, 0, 0, 0.4) 100%);
+            z-index: -2
+        }
+
+        .container {
+            width: min(100% - 40px, 900px);
+            max-width: 900px;
+            height: auto;
+            background: linear-gradient(145deg, rgba(20, 5, 5, 0.65), rgba(8, 2, 2, 0.75));
+            border: 2px solid #ff4444;
+            border-radius: 24px;
+            padding: 40px 32px;
+            margin: 20px auto;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(16px)
+        }
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(10, 0, 0, 0.98) 0%, rgba(30, 5, 5, 0.95) 25%, rgba(15, 0, 0, 0.98) 50%, rgba(25, 3, 3, 0.96) 75%, rgba(5, 0, 0, 1) 100%);
+            backdrop-filter: blur(12px)
+        }
+
+        .hidden {
+            display: none !important
+        }
+    </style>
+
+    <!-- Load full CSS non-blocking -->
+    <link rel="preload" href="style.css" as="style" onload="this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="style.css">
+    </noscript>
+
+    <!-- Defer JS -->
+    <script src="main.js" defer></script>
+
 </head>
 
 <body>
@@ -765,8 +854,6 @@
             <p class="footer-small">Created by Divyansh | Inspired by The Rising of the Shield Hero</p>
         </div>
     </footer>
-
-    <script src="main.js"></script>
 </body>
 
 </html>
