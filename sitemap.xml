@@ -1,9 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+    <!-- Main Quiz Page -->
     <url>
         <loc>https://divyansh3105.github.io/Shield-of-Wrath/</loc>
-        <lastmod>2026-01-05</lastmod>
-        <changefreq>monthly</changefreq>
+        <lastmod>2026-01-14</lastmod>
+        <changefreq>weekly</changefreq>
         <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://divyansh3105.github.io/Shield-of-Wrath/asset/og-image.png</image:loc>
+            <image:title>Shield of Wrath Quiz - The Rising of the Shield Hero</image:title>
+            <image:caption>Test your knowledge of The Rising of the Shield Hero anime and manga series</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://divyansh3105.github.io/Shield-of-Wrath/asset/banner.jpg</image:loc>
+            <image:title>Shield Hero Quiz Banner</image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://divyansh3105.github.io/Shield-of-Wrath/asset/shieldhero.webp</image:loc>
+            <image:title>Shield Hero Background</image:title>
+        </image:image>
+        <image:image>
+            <image:loc>https://divyansh3105.github.io/Shield-of-Wrath/asset/shieldmode.webp</image:loc>
+            <image:title>Shield Mode Theme</image:title>
+        </image:image>
     </url>
+
+    <!-- Quiz Interface -->
+    <url>
+        <loc>https://divyansh3105.github.io/Shield-of-Wrath/index.html</loc>
+        <lastmod>2026-01-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Assets for SEO -->
+    <url>
+        <loc>https://divyansh3105.github.io/Shield-of-Wrath/asset/QuizInterface.png</loc>
+        <lastmod>2026-01-14</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>https://divyansh3105.github.io/Shield-of-Wrath/asset/Results.png</loc>
+        <lastmod>2026-01-14</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
 </urlset>
